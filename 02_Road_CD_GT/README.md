@@ -41,7 +41,39 @@ innopam-PM2022004-digital-GT/02_Road_CD_GT
 
 #### Road_CD_GT.py: 도로수치지형도 기반 변화탐지 GT 생성 코드
 
-## 2. Road_CD_GT.py 사용방법
+------
+## 2. GT 생성 순서도
+```mermaid
+flowchart TD
+    subgraph Before[Before]
+        A[지리원 수치지형도:.shp] -->|ogr2ogr| B[수치지형도:.gpkg]
+        B --> C0[before_gpkg]
+        C0 -->|ogrmerge.py|C[before_merged.gpkg]
+
+        A1-1[지리원 수치지형도:.shp] -->|ogr2ogr| B1-1[수치지형도:.gpkg]
+        B1-1 --> C0
+        C -->|ogr2ogr| E[before_merged_valid.gpkg]
+    end
+
+    subgraph After[After]
+        A2[지리원 수치지형도:.shp] -->|ogr2ogr| B2[수치지형도:.gpkg]
+        B2 --> C2[after_gpkg]
+        C2 -->|ogrmerge.py|C20[after_merged.gpkg]
+
+        A2-1[지리원 수치지형도:.shp] -->|ogr2ogr| B2-1[수치지형도:.gpkg]
+        B2-1 --> C2
+        C20 -->|ogr2ogr| E2[after_merged_valid.gpkg]
+    end
+
+	  E --> F[Before, After 전역 수치지형도]
+	  E2 --> F
+	  F --> |ogr_layer_algebra.py| G[diff.gpkg]
+	  G --> |geopandas| H[filtered_diff.gpkg]
+
+```
+
+----
+## 3. Road_CD_GT.py 사용방법
 ```bash
 python Road_CD_GT.py \
 
@@ -68,8 +100,8 @@ python Road_CD_GT.py \
 --thres     1.7 \
 --thres_end 2.0 \
 ```
-
-## 3. Docker build 방법
+----
+## 4. Docker build 방법
 ```bash
 git clone git@github.com:innopam/innopam-PM2022004-digital-GT.git
 cd 02_Road_CD_GT
