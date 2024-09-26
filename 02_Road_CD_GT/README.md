@@ -1,4 +1,5 @@
 ## 1. 폴더 구성 설명
+```
 innopam-PM2022004-digital-GT/02_Road_CD_GT
 ├── datasets
 │   ├── 2019
@@ -16,6 +17,7 @@ innopam-PM2022004-digital-GT/02_Road_CD_GT
 │   └── filtered_diff.gpkg
 ├── README.md
 └── Road_CD_GT.py
+```
 
 #### datasets: 두 시기(2019, 2020년)에 대한 샘플 데이터셋
     - 하위에 before, after 년도에 해당하는 폴더가 두개 존재해야
