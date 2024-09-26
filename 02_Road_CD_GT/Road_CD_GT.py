@@ -202,7 +202,7 @@ if __name__ == "__main__":
                 try:  # 도엽번호와 일치: 37705072
                     index_name = str(folder.split("_")[1])
                 except:  # 폴더 이름 미존재시 -> 임의로 부여
-                    index_name = i + 1
+                    index_name = str(i + 1)
 
                 if data_type == "road":
                     # A0010000.shp, N3A_A0010000.shp 등
