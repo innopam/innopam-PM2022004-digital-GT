@@ -67,7 +67,10 @@ def make_args():
 # 1. shp -> gpkg
 def shp_to_gpkg(shp, gpkg):
     layer = os.path.basename(shp).split(".")[0]
-    subprocess.run(args=["ogr2ogr", "-f", "GPKG", "-nlt", "MULTIPOLYGON", gpkg, shp])
+    subprocess.run(
+        args=["ogr2ogr", "-f", "GPKG", "-nlt", "MULTIPOLYGON", gpkg, shp],
+        stderr=subprocess.DEVNULL,
+    )
 
 
 # 2. Merge gpkgs
@@ -76,18 +79,22 @@ def merge(dir_gpkg, merged_gpkg):
         "ogrmerge.py -single -f GPKG -o %s %s -nln merged"
         % (merged_gpkg, os.path.join(dir_gpkg, "*.gpkg")),
         shell=True,
+        stderr=subprocess.DEVNULL,
     )
     return merged_gpkg
 
 
 # 3. Make geometry valid
 def valid_geom(gpkg, valid_gpkg):
+    tmp = valid_gpkg.replace(".", "_tmp.")
     subprocess.run(
         "ogr2ogr -nlt MULTIPOLYGON %s %s -dialect sqlite -sql "
         '"SELECT ST_Buffer(geom,0) FROM merged" '
-        "-f GPKG" % (valid_gpkg, gpkg),
+        "-f GPKG" % (tmp, gpkg),
         shell=True,
+        stderr=subprocess.DEVNULL,
     )
+    set_srs(tmp, valid_gpkg)
     return valid_gpkg
 
 
@@ -98,6 +105,7 @@ def make_symm_diff(before, after, out_diff):
         "ogr_layer_algebra.py SymDifference -input_ds %s -method_ds %s -output_ds %s -output_lyr output -f GPKG -nlt MultiPolygon"
         % (before, after, tmp),
         shell=True,
+        stderr=subprocess.DEVNULL,
     )
 
     # Use only MultiPolygon or Polygon
@@ -150,10 +158,22 @@ def filter_diff(gpkg, out_gpkg, *thres):
             )
 
 
-# 6. Convert LineString, GeometryCollection -> MultiPolygon
+# 6. Convert geometry type(LineString, GeometryCollection -> MultiPolygon)
 def convert(gpkg, out_gpkg):
     subprocess.run(
-        "ogr2ogr -nlt MULTIPOLYGON %s %s output" % (out_gpkg, gpkg), shell=True
+        "ogr2ogr -nlt MULTIPOLYGON %s %s output" % (out_gpkg, gpkg),
+        shell=True,
+        stderr=subprocess.DEVNULL,
+    )
+    os.remove(gpkg)
+
+
+# 7. Set srs(EPSG:5186)
+def set_srs(gpkg, out_gpkg):
+    subprocess.run(
+        "ogr2ogr -t_srs EPSG:5186 %s %s" % (out_gpkg, gpkg),
+        shell=True,
+        stderr=subprocess.DEVNULL,
     )
     os.remove(gpkg)
 
