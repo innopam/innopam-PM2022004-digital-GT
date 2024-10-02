@@ -4,6 +4,7 @@
 - Export ‘Digital_Map_v1.0’ with property information('도면층', 'X1', 'Y1')
     - DXF → SHP
 - AutoCAD의 기능을 Python으로 제어하는 데 한계가 있음. 향후 AutoLISP 고려
+
 **Step2. Add property information**
 - Input: Digital_Map_v1.0.shp, Digital_Map_v2.0.shp
 - Process (Function)
@@ -12,6 +13,7 @@
         - 'crosses’ 조건: 객체들이 서로의 경계를 넘어가며 교차하는 특정한 상호작용을 강조
 - Output: Road_Seg_GT_’도엽번호’.shp
 - (현재 sample에는 Step2의 output 부터 존재)
+
 **Step3. Target region Merge and Clip**
 - Input: Road_Seg_GT_’도엽번호’.shp N개, ‘대상지역’_grid.shp 1개
 - Process (Function)
